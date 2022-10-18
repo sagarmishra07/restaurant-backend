@@ -34,7 +34,7 @@ export class MenuItem {
   })
   discountedPrice: Number;
 
-  @ManyToOne(() => ProductCategory)
+  @ManyToOne(() => ProductCategory, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn()
   category: ProductCategory;
 

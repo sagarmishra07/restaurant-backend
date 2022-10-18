@@ -13,7 +13,7 @@ export class CreateMenuItemDto {
   @IsNotEmpty()
   discountedPrice: string;
 
-  @IsNotEmpty()
+  // @IsNotEmpty()
   @ValidateNested()
   category: ProductCategory;
 

@@ -16,7 +16,7 @@ export class ProductCategoryService {
     const val = await this.findAll();
     const category_all_data = val.data.filter(
       (val) =>
-        createProductCategoryDto.categoryName.toLowerCase() ===
+        createProductCategoryDto.categoryName?.toLowerCase() ===
         val.categoryName,
     );
     if (category_all_data.length <= 0) {
