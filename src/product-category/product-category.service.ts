@@ -13,22 +13,36 @@ export class ProductCategoryService {
   ) {}
 
   async create(createProductCategoryDto: CreateProductCategoryDto) {
-    try {
-      const category_data = await this.productCategoryRepo.save({
-        ...createProductCategoryDto,
-      });
+    const val = await this.findAll();
+    const category_all_data = val.data.filter(
+      (val) =>
+        createProductCategoryDto.categoryName.toLowerCase() ===
+        val.categoryName,
+    );
+    if (category_all_data.length <= 0) {
+      try {
+        const category_data = await this.productCategoryRepo.save({
+          ...createProductCategoryDto,
+        });
 
-      return {
-        status: HttpStatus.OK,
-        message: 'Category Added  Successfully',
-        data: {
-          ...category_data,
-        },
-      };
-    } catch (e) {
+        return {
+          status: HttpStatus.OK,
+          message: 'Category Added  Successfully',
+          data: {
+            ...category_data,
+          },
+        };
+      } catch (e) {
+        return {
+          status: HttpStatus.NOT_FOUND,
+          message: e,
+          data: [],
+        };
+      }
+    } else {
       return {
         status: HttpStatus.NOT_FOUND,
-        message: e,
+        message: 'Category Already Exists',
         data: [],
       };
     }
@@ -62,14 +76,24 @@ export class ProductCategoryService {
     const updated_data = await this.productCategoryRepo
       .createQueryBuilder()
       .update(ProductCategory)
-      .set(updateProductCategoryDto)
-      .where('id = :id', { id: 1 })
+      .set({
+        categoryName: updateProductCategoryDto.categoryName,
+      })
+      .where('id = :id', { id: id })
       .execute();
-    return {
-      status: HttpStatus.OK,
-      message: 'Updated Successfully',
-      data: [updated_data],
-    };
+    if (updated_data.affected > 0) {
+      const category_data = await this.findAll();
+      return {
+        status: HttpStatus.OK,
+        message: 'Updated Successfully',
+        data: [category_data],
+      };
+    } else {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'Category Not Found',
+      };
+    }
   }
 
   async remove(id: number) {

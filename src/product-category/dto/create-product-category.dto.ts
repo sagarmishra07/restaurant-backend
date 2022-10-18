@@ -7,7 +7,7 @@ export class CreateProductCategoryDto {
   categoryName: string;
 
   @IsNotEmpty()
-  createdBy: number;
+  createdBy: string;
 
   @IsNotEmpty()
   createdAt: Date;

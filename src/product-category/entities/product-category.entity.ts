@@ -21,8 +21,9 @@ export class ProductCategory {
 
   @Column({
     nullable: false,
+    default: Roles.ADMIN,
   })
-  createdBy: number;
+  createdBy: string;
 
   @CreateDateColumn()
   createdAt: Date;

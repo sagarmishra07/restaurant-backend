@@ -4,8 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { ProductCategoryModule } from './product-category/product-category.module';
 import * as dotenv from 'dotenv';
-import { JwtStrategy } from './auth/jwt.strategy';
-
+import { ImageuploadModule } from './imageupload/imageupload.module';
 dotenv.config();
 
 @Module({
@@ -25,6 +24,8 @@ dotenv.config();
       synchronize: true,
       autoLoadEntities: true,
     }),
+
+    ImageuploadModule,
   ],
 })
 export class AppModule {}
