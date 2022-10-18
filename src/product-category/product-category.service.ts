@@ -118,7 +118,8 @@ export class ProductCategoryService {
       }
     } catch (e) {
       return {
-        message: e,
+        status: e.status,
+        message: e.message,
       };
     }
   }

@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ProductCategoryModule } from './product-category/product-category.module';
 import * as dotenv from 'dotenv';
 import { ImageuploadModule } from './imageupload/imageupload.module';
+import { MenuItemModule } from './menu_item/menu_item.module';
 dotenv.config();
 
 @Module({
@@ -26,6 +27,8 @@ dotenv.config();
     }),
 
     ImageuploadModule,
+
+    MenuItemModule,
   ],
 })
 export class AppModule {}
