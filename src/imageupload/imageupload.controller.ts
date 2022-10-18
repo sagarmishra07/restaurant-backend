@@ -16,5 +16,7 @@ export class ImageuploadController {
   @UseInterceptors(FileInterceptor('image'))
   async uploadSingle(@UploadedFile() file) {
     return await this.imageuploadService.upload(file);
+
+    // console.log(file);
   }
 }
