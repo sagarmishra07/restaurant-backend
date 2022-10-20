@@ -7,10 +7,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Roles } from '../../user/user.enum';
+import { GenericEntity } from '../../utils/generic.entity';
 
 @Entity()
 @Unique('unique_constraint', ['categoryName'])
-export class ProductCategory {
+export class ProductCategory extends GenericEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -24,10 +25,4 @@ export class ProductCategory {
     default: Roles.ADMIN,
   })
   createdBy: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

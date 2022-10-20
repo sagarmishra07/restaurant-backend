@@ -11,20 +11,21 @@ import { TransformInterceptor } from 'src/interceptor/Response';
 import { RegisterDto } from '../dtos/register.dto';
 import { UserService } from '../service/user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { UserDto } from '../dtos/user.dto';
 
 @UseInterceptors(TransformInterceptor)
-@Controller('api/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('all')
   async getAllUsers(@Request() req) {
     return this.userService.getAllUsers(req.user);
   }
 
   @Post('create')
-  createUser(@Body() user: RegisterDto) {
+  createUser(@Body() user: UserDto) {
     return this.userService.createUser(user);
   }
 }

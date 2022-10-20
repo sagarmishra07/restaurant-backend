@@ -1,9 +1,10 @@
-import { HttpStatus, Injectable, Res } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Res } from '@nestjs/common';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ProductCategory } from './entities/product-category.entity';
 import { Repository } from 'typeorm';
+import { ReceiveCategoryDto } from './dto/receive-category.dto';
 
 @Injectable()
 export class ProductCategoryService {
@@ -17,47 +18,42 @@ export class ProductCategoryService {
     const category_all_data = val.data.filter(
       (val) =>
         createProductCategoryDto.categoryName?.toLowerCase() ===
-        val.categoryName,
+        val?.categoryName?.toLowerCase(),
     );
     if (category_all_data.length <= 0) {
       try {
-        const category_data = await this.productCategoryRepo.save({
+        await this.productCategoryRepo.save({
           ...createProductCategoryDto,
         });
 
         return {
           status: HttpStatus.OK,
           message: 'Category Added  Successfully',
-          data: {
-            ...category_data,
-          },
         };
       } catch (e) {
         return {
-          status: HttpStatus.NOT_FOUND,
-          message: e,
-          data: [],
+          status: e.status,
+          message: e.message,
         };
       }
     } else {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: 'Category Already Exists',
-        data: [],
-      };
+      throw new HttpException('Category Already Exists', HttpStatus.FOUND);
     }
   }
 
   async findAll() {
     try {
-      const all_users = await this.productCategoryRepo
+      const all_category = await this.productCategoryRepo
         .createQueryBuilder('ProductCategory')
 
         .getMany();
+      const received_category = all_category.map((val) =>
+        ReceiveCategoryDto.receive(val),
+      );
       return {
         status: HttpStatus.OK,
         message: 'Product Category Fetched Successfully',
-        data: [...all_users],
+        data: received_category,
       };
     } catch (e) {
       return {

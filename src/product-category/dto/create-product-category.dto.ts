@@ -1,17 +1,10 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateProductCategoryDto {
   id: number;
 
-  @IsNotEmpty()
+  @IsString()
+  @MinLength(3)
+  @MaxLength(25)
   categoryName: string;
-
-  @IsNotEmpty()
-  createdBy: string;
-
-  @IsNotEmpty()
-  createdAt: Date;
-
-  @IsNotEmpty()
-  updatedAt: Date;
 }

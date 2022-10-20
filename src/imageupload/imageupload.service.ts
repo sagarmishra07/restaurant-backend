@@ -34,7 +34,7 @@ export class ImageuploadService {
 
   async uploadS3(file, bucket, name) {
     const s3 = this.getS3();
-
+    const randomNumber = Math.floor(Math.random() * 10);
     const params = {
       Bucket: bucket,
       Key: String(name),

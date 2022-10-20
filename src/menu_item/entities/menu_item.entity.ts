@@ -12,10 +12,11 @@ import {
 import { ProductCategory } from '../../product-category/entities/product-category.entity';
 import { Roles } from '../../user/user.enum';
 import { ProductStatus } from '../product_status.enum';
+import { GenericEntity } from '../../utils/generic.entity';
 
 @Entity()
 // @Unique('unique_constraint', ['email'])
-export class MenuItem {
+export class MenuItem extends GenericEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,13 +35,16 @@ export class MenuItem {
   })
   discountedPrice: Number;
 
-  @ManyToOne(() => ProductCategory, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => ProductCategory, (category) => category.id, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn()
   category: ProductCategory;
 
   @Column({
     nullable: false,
-    default: ProductStatus.PENDING,
+    default: ProductStatus.ACTIVE,
   })
   status: string;
 
@@ -59,10 +63,4 @@ export class MenuItem {
     default: Roles.ADMIN,
   })
   createdBy: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }

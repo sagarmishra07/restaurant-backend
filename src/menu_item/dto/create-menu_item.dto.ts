@@ -1,37 +1,25 @@
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsNumber, IsString, MaxLength } from 'class-validator';
 import { ProductCategory } from '../../product-category/entities/product-category.entity';
 
 export class CreateMenuItemDto {
   id: number;
 
-  @IsNotEmpty()
+  @IsString()
+  @MaxLength(25)
   foodName: string;
 
-  @IsNotEmpty()
-  foodPrice: string;
+  @IsNumber()
+  foodPrice: number;
 
-  @IsNotEmpty()
-  discountedPrice: string;
+  @IsNumber()
+  discountedPrice: number;
 
-  // @IsNotEmpty()
-  @ValidateNested()
+  @IsNumber()
   category: ProductCategory;
 
-  @IsNotEmpty()
-  status: string;
-
-  @IsNotEmpty()
+  @IsString()
   ingredients: string;
 
-  @IsNotEmpty()
+  @IsString()
   productImage: string;
-
-  @IsNotEmpty()
-  createdBy: string;
-
-  @IsNotEmpty()
-  createdAt: Date;
-
-  @IsNotEmpty()
-  updatedAt: Date;
 }

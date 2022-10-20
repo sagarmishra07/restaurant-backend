@@ -15,7 +15,7 @@ import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-@Controller('api/product-category')
+@Controller('product-category')
 export class ProductCategoryController {
   constructor(
     private readonly productCategoryService: ProductCategoryService,
@@ -26,6 +26,7 @@ export class ProductCategoryController {
     @Body() createProductCategoryDto: CreateProductCategoryDto,
     @Request() req,
   ) {
+    console.log(createProductCategoryDto);
     return this.productCategoryService.create(createProductCategoryDto);
   }
 

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import { ReceiveUserDto } from '../dtos/receive-user.dto';
 
 export class BcryptService {
   private static readonly saltRounds = 7;
@@ -27,34 +28,50 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async findOne(username: string): Promise<User | undefined> {
+  async findOne(userDto): Promise<User | undefined> {
     const user = await this.userRepo
       .createQueryBuilder('user')
       .where('user.username = :username', {
-        username: username,
+        username: userDto.username,
       })
+
       .getOne();
-    return user;
+
+    const userEmail = await this.userRepo
+      .createQueryBuilder('user')
+      .where('user.email = :email', {
+        email: userDto.email,
+      })
+
+      .getOne();
+    if (userEmail) {
+      return userEmail;
+    } else if (user) {
+      return user;
+    } else {
+      return null;
+    }
   }
-  async loginUser(username: string, password: string) {
+  async loginUser(userDto: any) {
+    console.log(userDto);
     try {
-      const user = await this.findOne(username);
+      const user = await this.findOne(userDto);
 
       const result = await this.bcryptService.comparePassword(
         user.password,
-        password,
+        userDto.password,
       );
       if (user && result) {
-        const { password, ...rest } = user;
+        const returnedUser = ReceiveUserDto.receive(user);
 
-        const jwt = this.jwtService.sign({ ...rest });
+        const jwt = this.jwtService.sign({ ...returnedUser });
 
         return {
           status: HttpStatus.OK,
           message: 'User Logged In Successfully',
 
           data: {
-            ...rest,
+            ...returnedUser,
 
             token: jwt,
           },

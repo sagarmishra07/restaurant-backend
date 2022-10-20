@@ -8,7 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductCategoryService } from '../product-category/product-category.service';
 import { ImageuploadService } from './imageupload.service';
 
-@Controller('api/upload')
+@Controller('upload')
 export class ImageuploadController {
   constructor(private readonly imageuploadService: ImageuploadService) {}
 

@@ -1,10 +1,23 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Roles, Status } from '../user.enum';
+import { GenericEntity } from '../../utils/generic.entity';
 @Entity()
-@Unique('unique_constraint', ['username'])
-export class User{
+@Unique('unique_constraint', ['username', 'email'])
+export class User extends GenericEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    nullable: false,
+  })
+  email: string;
 
   @Column({
     nullable: false,
@@ -19,7 +32,7 @@ export class User{
   @Column({
     type: 'enum',
     enum: Roles,
-    default: Roles.USER,
+    default: Roles.CUSTOMER,
   })
   role: Roles;
 
@@ -29,6 +42,4 @@ export class User{
     default: Status.ACTIVE,
   })
   status: Status;
-
-
 }

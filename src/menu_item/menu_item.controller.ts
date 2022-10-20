@@ -12,7 +12,7 @@ import { MenuItemService } from './menu_item.service';
 import { CreateMenuItemDto } from './dto/create-menu_item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu_item.dto';
 
-@Controller('api/menu-item')
+@Controller('menu-item')
 export class MenuItemController {
   constructor(private readonly menuItemService: MenuItemService) {}
 
@@ -27,7 +27,7 @@ export class MenuItemController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.menuItemService.findOne(+id);
   }
 

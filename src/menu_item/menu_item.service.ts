@@ -1,10 +1,11 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateMenuItemDto } from './dto/create-menu_item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu_item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuItem } from './entities/menu_item.entity';
 import { ProductCategory } from '../product-category/entities/product-category.entity';
+import { ReceiveMenuDto } from './dto/receive-menu-dto';
 
 @Injectable()
 export class MenuItemService {
@@ -42,10 +43,14 @@ export class MenuItemService {
       .leftJoinAndSelect('menuItem.category', 'id')
       .getMany();
 
+    const receivedMenu = all_menuItems.map((val) =>
+      ReceiveMenuDto.receive(val),
+    );
+
     return {
       status: HttpStatus.OK,
       message: 'MenuItem Fetched Successfully',
-      data: all_menuItems,
+      data: receivedMenu,
     };
   }
 
@@ -56,18 +61,16 @@ export class MenuItemService {
       .leftJoinAndSelect('menuItem.category', 'id')
       .getMany();
 
-    if (all_menuItems.length > 0) {
+    const received_menu = ReceiveMenuDto.receive(all_menuItems[0]);
+
+    if (received_menu) {
       return {
         status: HttpStatus.OK,
         message: 'MenuItem Fetched Successfully',
-        data: all_menuItems,
+        data: received_menu,
       };
     } else {
-      return {
-        status: HttpStatus.NOT_FOUND,
-        message: `MenuItem Not Found`,
-        data: [],
-      };
+      throw new HttpException('Menu Items Not Found', HttpStatus.NOT_FOUND);
     }
   }
 
@@ -80,17 +83,12 @@ export class MenuItemService {
         .where('id = :id', { id: id })
         .execute();
       if (updated_data.affected > 0) {
-        const category_data = await this.findAll();
         return {
           status: HttpStatus.OK,
           message: 'Updated Successfully',
-          data: [category_data],
         };
       } else {
-        return {
-          status: HttpStatus.NOT_FOUND,
-          message: 'Category Not Found',
-        };
+        throw new HttpException('MenuItem not found', HttpStatus.NOT_FOUND);
       }
     } catch (e) {
       return {
@@ -115,10 +113,7 @@ export class MenuItemService {
           message: 'MenuItem Deleted Successfully',
         };
       } else {
-        return {
-          status: HttpStatus.NOT_FOUND,
-          message: 'MENUITEM NOT FOUND',
-        };
+        throw new HttpException('MenuItem not found', HttpStatus.NOT_FOUND);
       }
     } catch (e) {
       return {

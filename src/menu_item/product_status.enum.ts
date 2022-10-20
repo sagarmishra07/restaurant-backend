@@ -1,6 +1,6 @@
 export enum ProductStatus {
   ACTIVE = 'ACTIVE',
-  PENDING = 'PENDING',
+  INACTIVE = 'INACTIVE',
 }
 
 // export enum Status {

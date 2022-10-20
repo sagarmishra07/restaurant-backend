@@ -1,10 +1,9 @@
-export enum Roles{
-    ADMIN='ADMIN',
-    BIT='BIT',
-    USER='USER'
+export enum Roles {
+  ADMIN = 'ADMIN',
+  CUSTOMER = 'CUSTOMER',
 }
 
-export enum Status{
-    ACTIVE='ACTIVE',
-    INACTIVE='INACTIVE'
+export enum Status {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
