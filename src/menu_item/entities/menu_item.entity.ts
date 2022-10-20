@@ -1,21 +1,16 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  OneToMany,
   JoinColumn,
-  OneToOne,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
 import { ProductCategory } from '../../product-category/entities/product-category.entity';
-import { Roles } from '../../user/user.enum';
+import { Role } from '../../user/user.enum';
 import { ProductStatus } from '../product_status.enum';
 import { GenericEntity } from '../../utils/generic.entity';
 
 @Entity()
-// @Unique('unique_constraint', ['email'])
 export class MenuItem extends GenericEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -60,7 +55,7 @@ export class MenuItem extends GenericEntity {
 
   @Column({
     nullable: false,
-    default: Roles.ADMIN,
+    default: Role.ADMIN,
   })
   createdBy: string;
 }

@@ -6,8 +6,7 @@ import { ProductCategoryModule } from './product-category/product-category.modul
 import * as dotenv from 'dotenv';
 import { ImageuploadModule } from './imageupload/imageupload.module';
 import { MenuItemModule } from './menu_item/menu_item.module';
-import { AuthService } from './auth/service/auth.service';
-import { LocalStrategy } from './auth/local.strategy';
+
 dotenv.config();
 
 @Module({

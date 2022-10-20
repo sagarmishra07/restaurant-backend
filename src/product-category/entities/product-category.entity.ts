@@ -1,12 +1,5 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  Unique,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Roles } from '../../user/user.enum';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Role } from '../../user/user.enum';
 import { GenericEntity } from '../../utils/generic.entity';
 
 @Entity()
@@ -22,7 +15,7 @@ export class ProductCategory extends GenericEntity {
 
   @Column({
     nullable: false,
-    default: Roles.ADMIN,
+    default: Role.ADMIN,
   })
   createdBy: string;
 }

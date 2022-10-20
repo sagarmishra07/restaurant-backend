@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { Roles, Status } from '../user.enum';
+import { Role, Status } from '../user.enum';
 import { GenericEntity } from '../../utils/generic.entity';
 @Entity()
 @Unique('unique_constraint', ['username', 'email'])
@@ -24,10 +24,10 @@ export class User extends GenericEntity {
 
   @Column({
     type: 'enum',
-    enum: Roles,
-    default: Roles.CUSTOMER,
+    enum: Role,
+    default: Role.CUSTOMER,
   })
-  role: Roles;
+  role: Role;
 
   @Column({
     type: 'enum',

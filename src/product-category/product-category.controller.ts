@@ -13,7 +13,10 @@ import {
 import { ProductCategoryService } from './product-category.service';
 import { CreateProductCategoryDto } from './dto/create-product-category.dto';
 import { UpdateProductCategoryDto } from './dto/update-product-category.dto';
-import { AuthGuard } from '@nestjs/passport';
+import { HasRoles } from '../auth/has-role.decorator';
+import { Role } from '../user/user.enum';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/roles.guard';
 
 @Controller('product-category')
 export class ProductCategoryController {
@@ -22,15 +25,18 @@ export class ProductCategoryController {
   ) {}
 
   @Post('add')
+  @HasRoles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   create(
     @Body() createProductCategoryDto: CreateProductCategoryDto,
     @Request() req,
   ) {
-    console.log(createProductCategoryDto);
     return this.productCategoryService.create(createProductCategoryDto);
   }
 
   @Get('all')
+  @HasRoles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   findAll() {
     return this.productCategoryService.findAll();
   }
@@ -41,6 +47,8 @@ export class ProductCategoryController {
   // }
 
   @Put('update/:id')
+  @HasRoles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   update(
     @Param('id') id: string,
     @Body() updateProductCategoryDto: UpdateProductCategoryDto,
@@ -49,6 +57,8 @@ export class ProductCategoryController {
   }
 
   @Delete('delete/:id')
+  @HasRoles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   remove(@Param('id') id: string) {
     return this.productCategoryService.remove(+id);
   }
