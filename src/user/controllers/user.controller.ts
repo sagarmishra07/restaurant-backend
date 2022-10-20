@@ -18,9 +18,10 @@ import { UserDto } from '../dtos/user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Get('all')
   async getAllUsers(@Request() req) {
+    console.log(req.user);
     return this.userService.getAllUsers(req.user);
   }
 

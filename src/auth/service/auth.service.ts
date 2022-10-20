@@ -28,42 +28,28 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async findOne(userDto): Promise<User | undefined> {
-    const user = await this.userRepo
-      .createQueryBuilder('user')
-      .where('user.username = :username', {
-        username: userDto.username,
-      })
-
-      .getOne();
-
+  async findOne(email: string, password: string): Promise<User | undefined> {
     const userEmail = await this.userRepo
       .createQueryBuilder('user')
       .where('user.email = :email', {
-        email: userDto.email,
+        email: email,
       })
 
       .getOne();
-    if (userEmail) {
-      return userEmail;
-    } else if (user) {
-      return user;
-    } else {
-      return null;
-    }
+
+    return userEmail;
   }
-  async loginUser(userDto: any) {
-    console.log(userDto);
+  async loginUser(email: string, password: string) {
     try {
-      const user = await this.findOne(userDto);
+      const user = await this.findOne(email, password);
 
       const result = await this.bcryptService.comparePassword(
         user.password,
-        userDto.password,
+        password,
       );
+
       if (user && result) {
         const returnedUser = ReceiveUserDto.receive(user);
-
         const jwt = this.jwtService.sign({ ...returnedUser });
 
         return {
@@ -79,7 +65,7 @@ export class AuthService {
       } else {
         return {
           status: HttpStatus.NOT_FOUND,
-          message: 'Username or Password Incorrect',
+          message: 'email or Password Incorrect',
 
           data: {
             token: '',

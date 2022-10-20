@@ -16,38 +16,38 @@ export class UserService {
   ) {}
 
   async getAllUsers(currentUser) {
-    // if (currentUser.role === 'ADMIN') {
-    // const all_users = await this.userRepo
-    //   .createQueryBuilder('user')
-    //   .leftJoinAndSelect('user.user', 'user')
-    //   .where('user.status= :status', {
-    //     status: 'ACTIVE',
-    //   })
-    //   .getMany();
-    const all_users = await this.userRepo
-      .createQueryBuilder('user')
+    if (currentUser.role === 'ADMIN') {
+      // const all_users = await this.userRepo
+      //   .createQueryBuilder('user')
+      //   .leftJoinAndSelect('user.user', 'user')
+      //   .where('user.status= :status', {
+      //     status: 'ACTIVE',
+      //   })
+      //   .getMany();
+      const all_users = await this.userRepo
+        .createQueryBuilder('user')
 
-      .getMany();
+        .getMany();
 
-    const returnedUserData = all_users.map((val) =>
-      ReceiveUserDto.receive(val),
-    );
-    const role_customer_only = returnedUserData.filter(
-      (val) => val.role === 'CUSTOMER',
-    );
+      const returnedUserData = all_users.map((val) =>
+        ReceiveUserDto.receive(val),
+      );
+      const role_customer_only = returnedUserData.filter(
+        (val) => val.role === 'CUSTOMER',
+      );
 
-    return {
-      status: HttpStatus.FOUND,
-      message: 'User Data Fetched Successfully',
-      data: [...role_customer_only],
-    };
-    // } else {
-    //   return {
-    //     status: HttpStatus.UNAUTHORIZED,
-    //     message: 'Unauthorized Access',
-    //     data: [],
-    //   };
-    // }
+      return {
+        status: HttpStatus.FOUND,
+        message: 'User Data Fetched Successfully',
+        data: [...role_customer_only],
+      };
+    } else {
+      return {
+        status: HttpStatus.UNAUTHORIZED,
+        message: 'Unauthorized Access',
+        data: [],
+      };
+    }
   }
 
   async checkConflict(user) {

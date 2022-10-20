@@ -8,13 +8,13 @@ import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './jwt.strategy';
+import { LocalAuthGuard } from './local-auth-guard';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     UserModule,
     PassportModule,
-    JwtStrategy,
 
     JwtModule.register({
       secret: 'secret',
@@ -22,6 +22,6 @@ import { JwtStrategy } from './jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [BcryptService, AuthService, LocalStrategy],
+  providers: [BcryptService, AuthService, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}
