@@ -10,7 +10,7 @@ import { User } from './user.entity';
 import { GenericEntity } from '../../utils/generic.entity';
 
 @Entity()
-@Unique('unique_constraint', ['email'])
+@Unique('unique_constraint', ['phone'])
 export class UserDetails extends GenericEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,14 +18,12 @@ export class UserDetails extends GenericEntity {
   @Column({
     nullable: false,
   })
-  email: String;
+  phone: String;
 
-  @Column({
-    nullable: false,
+  @OneToOne(() => User, (user) => user.id, {
+    cascade: true,
+    onDelete: 'CASCADE',
   })
-  city: String;
-
-  @OneToOne(() => User, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 }

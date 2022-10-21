@@ -7,3 +7,14 @@ export const ReceiveUserDto = {
     status: data?.status || '---',
   }),
 };
+export const ReceiveUserDetailDto = {
+  receive: (data: any) => ({
+    id: data?.id,
+    userId: data?.user.id || '---',
+    username: data?.user.username || '---',
+    email: data?.user.email || '---',
+    role: data?.user.role || '---',
+    status: data?.user.status || '---',
+    phone: data?.phone || '---',
+  }),
+};

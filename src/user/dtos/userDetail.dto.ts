@@ -1,14 +1,14 @@
-import { IsEmail, IsNotEmpty, ValidateNested } from 'class-validator';
-import { UserDto } from './user.dto';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { User } from '../entity/user.entity';
 
 export class UserDetailsDto {
   id: number;
 
-  @IsEmail()
-  email: string;
+  @IsString()
+  @MinLength(10)
+  @MaxLength(10)
+  phone: String;
 
-  city: string;
-
-  @ValidateNested()
-  user: UserDto;
+  @IsOptional()
+  user: User;
 }

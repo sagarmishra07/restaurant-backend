@@ -4,7 +4,6 @@ import { UpdateMenuItemDto } from './dto/update-menu_item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuItem } from './entities/menu_item.entity';
-import { ProductCategory } from '../product-category/entities/product-category.entity';
 import { ReceiveMenuDto } from './dto/receive-menu-dto';
 
 @Injectable()
@@ -34,7 +33,6 @@ export class MenuItemService {
         data: [],
       };
     }
-    return 'This action adds a new menuItem';
   }
 
   async findAll() {

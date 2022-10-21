@@ -1,11 +1,18 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BcryptService } from '../../auth/service/auth.service';
 import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 
 import { UserDto } from '../dtos/user.dto';
-import { ReceiveUserDto } from '../../auth/dtos/receive-user.dto';
+import {
+  ReceiveUserDetailDto,
+  ReceiveUserDto,
+} from '../../auth/dtos/receive-user.dto';
+import { UserDetailsDto } from '../dtos/userDetail.dto';
+import { UserDetails } from '../entity/userDetail.entity';
+import { UpdateMenuItemDto } from '../../menu_item/dto/update-menu_item.dto';
+import { MenuItem } from '../../menu_item/entities/menu_item.entity';
 
 @Injectable()
 export class UserService {
@@ -13,44 +20,39 @@ export class UserService {
     @InjectRepository(User) private readonly userRepo: Repository<User>,
 
     private readonly bcryptService: BcryptService,
+    @InjectRepository(UserDetails)
+    private readonly userDetailRepository: Repository<UserDetails>,
   ) {}
 
-  async getAllUsers(currentUser) {
-    if (currentUser.role === 'ADMIN') {
-      // const all_users = await this.userRepo
-      //   .createQueryBuilder('user')
-      //   .leftJoinAndSelect('user.user', 'user')
-      //   .where('user.status= :status', {
-      //     status: 'ACTIVE',
-      //   })
-      //   .getMany();
-      const all_users = await this.userRepo
-        .createQueryBuilder('user')
+  //userDetails
+  async getAllUsers() {
+    // const all_users = await this.userRepo
+    //   .createQueryBuilder('user')
+    //   .leftJoinAndSelect('user.user', 'user')
+    //   .where('user.status= :status', {
+    //     status: 'ACTIVE',
+    //   })
+    //   .getMany();
+    const all_users = await this.userDetailRepository
+      .createQueryBuilder('userDetails')
+      .leftJoinAndSelect('userDetails.user', 'id')
+      .getMany();
 
-        .getMany();
+    const returnedUserData = all_users.map((val) =>
+      ReceiveUserDetailDto.receive(val),
+    );
+    const role_customer_only = returnedUserData.filter(
+      (val) => val.role === 'CUSTOMER',
+    );
 
-      const returnedUserData = all_users.map((val) =>
-        ReceiveUserDto.receive(val),
-      );
-      const role_customer_only = returnedUserData.filter(
-        (val) => val.role === 'CUSTOMER',
-      );
-
-      return {
-        status: HttpStatus.FOUND,
-        message: 'User Data Fetched Successfully',
-        data: [...role_customer_only],
-      };
-    } else {
-      return {
-        status: HttpStatus.UNAUTHORIZED,
-        message: 'Unauthorized Access',
-        data: [],
-      };
-    }
+    return {
+      status: HttpStatus.FOUND,
+      message: 'User Data Fetched Successfully',
+      data: [...role_customer_only],
+    };
   }
 
-  async checkConflict(user) {
+  async checkConflict(user, userDetails) {
     const getUserName = await this.userRepo
       .createQueryBuilder('user')
       .where('username= :user_n', {
@@ -63,19 +65,29 @@ export class UserService {
         u_email: user.email,
       })
       .getMany();
-    if (getUserEmail.length > 0 || getUserName.length > 0) {
+    const getUserPhone = await this.userDetailRepository
+      .createQueryBuilder('userDetails')
+      .where('phone= :phone', {
+        phone: userDetails.phone,
+      })
+      .getMany();
+    if (
+      getUserEmail.length > 0 ||
+      getUserName.length > 0 ||
+      getUserPhone.length > 0
+    ) {
       return true;
     } else {
       return false;
     }
   }
 
-  async createUser(register: UserDto) {
+  async createUser(register: UserDto, userDetails: UserDetailsDto) {
     try {
-      const status = await this.checkConflict(register);
+      const status = await this.checkConflict(register, userDetails);
       if (status) {
         return {
-          message: 'Email or Username already used',
+          message: 'Email, Username Or Phone already used',
           data: [],
         };
       } else {
@@ -91,12 +103,73 @@ export class UserService {
         });
 
         const returnedUser = ReceiveUserDto.receive(r_user);
-        const { password, ...rest } = r_user;
 
+        const registeredUserDetails = await this.createUserDetails(
+          returnedUser.id,
+          userDetails,
+        );
         return {
           message: 'User registered Successfully',
-          data: { ...returnedUser },
+          data: { ...returnedUser, userDetail: registeredUserDetails },
         };
+      }
+    } catch (e) {
+      return {
+        status: e.status,
+        message: e.message,
+      };
+    }
+  }
+  //helper function
+  async createUserDetails(userId, userDetails) {
+    const n_user = this.userDetailRepository.create({
+      ...userDetails,
+      user: userId,
+    });
+    const r_user = await this.userDetailRepository.save({
+      ...n_user,
+    });
+    return r_user;
+  }
+  async updateDetails(id: number, userDetails: UserDetailsDto) {
+    try {
+      const updated_data = await this.userDetailRepository
+        .createQueryBuilder()
+        .update(UserDetails)
+        .set({ ...userDetails })
+        .where('id = :id', { id: id })
+        .execute();
+      if (updated_data.affected > 0) {
+        return {
+          status: HttpStatus.OK,
+          message: 'UserDetails Updated Successfully',
+        };
+      } else {
+        throw new HttpException('UserDetails not found', HttpStatus.NOT_FOUND);
+      }
+    } catch (e) {
+      return {
+        status: e.status,
+        message: e.message,
+      };
+    }
+  }
+  async remove(id: number) {
+    try {
+      const data = await this.userRepo
+        .createQueryBuilder()
+        .delete()
+        .from(User)
+        .where('id = :id', { id: id })
+        .execute();
+
+      if (data.affected > 0) {
+        return {
+          status: HttpStatus.OK,
+          message: 'User Deleted Successfully',
+        };
+      } else {
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
     } catch (e) {
       return {
