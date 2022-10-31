@@ -18,7 +18,6 @@ import { Role } from '../user.enum';
 import { JwtAuthGuard } from '../../auth/jwt-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { UserDetailsDto } from '../dtos/userDetail.dto';
-import { UpdateMenuItemDto } from '../../menu_item/dto/update-menu_item.dto';
 
 @UseInterceptors(TransformInterceptor)
 @Controller('user')
@@ -45,6 +44,7 @@ export class UserController {
   }
 
   @Put('update/user-details/:id')
+  @UseGuards(JwtAuthGuard)
   update(@Param('id') id: string, @Body() userDetails: UserDetailsDto) {
     return this.userService.updateDetails(+id, userDetails);
   }

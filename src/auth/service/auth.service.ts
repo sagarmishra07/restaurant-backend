@@ -50,6 +50,7 @@ export class AuthService {
 
       if (user && result) {
         const returnedUser = ReceiveUserDto.receive(user);
+
         const jwt = this.jwtService.sign({ ...returnedUser });
 
         return {

@@ -9,8 +9,8 @@ export const ReceiveUserDto = {
 };
 export const ReceiveUserDetailDto = {
   receive: (data: any) => ({
-    id: data?.id,
     userId: data?.user.id || '---',
+    userDetailId: data?.id || '---',
     username: data?.user.username || '---',
     email: data?.user.email || '---',
     role: data?.user.role || '---',

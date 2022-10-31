@@ -136,13 +136,18 @@ export class UserService {
       const updated_data = await this.userDetailRepository
         .createQueryBuilder()
         .update(UserDetails)
-        .set({ ...userDetails })
+        .set({
+          phone: userDetails.phone,
+        })
         .where('id = :id', { id: id })
         .execute();
+      const returned_user_details = await this.getAllUsers();
+
       if (updated_data.affected > 0) {
         return {
           status: HttpStatus.OK,
           message: 'UserDetails Updated Successfully',
+          data: returned_user_details,
         };
       } else {
         throw new HttpException('UserDetails not found', HttpStatus.NOT_FOUND);
